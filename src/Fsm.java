@@ -1,72 +1,37 @@
-import java.io.PrintWriter;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.*;
 
-import static com.sun.tools.jdeprscan.DeprDB.loadFromFile;//hatırlat
+public class FSM implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    private Set<String> symbols;
+    private Set<String> states;
+    private String initialState;
+    private Set<String> finalStates;
+    private Map<String, Map<String, String>> transitions;
 
-public class Fsm {
-    private Set<String> symbols = new LinkedHashSet<>();
-    private Set<String> states = new LinkedHashSet<>();
-    private String initialState = null;
-    private Set<String> finalStates = new LinkedHashSet<>();
-    private Map<String, Map<String, String>> transitions = new HashMap<>();
-    private boolean logging = false;
-    private transient PrintWriter logWriter = null;
-    public void start(String[] args) {
-        System.out.println("FSM DESIGNER <1.0> " + LocalDateTime.now());
-        if (args.length > 0) {
-            loadFromFile(args[0]);
-        }
-        interactiveMode();
+    public FSM() {
+        symbols = new LinkedHashSet<>();
+        states = new LinkedHashSet<>();
+        finalStates = new LinkedHashSet<>();
+        transitions = new HashMap<>();
+        initialState = null;
     }
 
-    private void interactiveMode() {
-        Scanner scanner = new Scanner(System.in);
-        StringBuilder commandBuilder = new StringBuilder();
-        while (true) {
-            System.out.print("? ");
-            String line = scanner.nextLine();
-
-            if (line.trim().startsWith(";")) continue; // comment
-
-            commandBuilder.append(" ").append(line.trim());
-            if (line.contains(";")) {
-                String command = commandBuilder.toString().split(";")[0].trim();
-                handleCommand(command);
-                commandBuilder.setLength(0);
-            }
-        }
-    }
-    private void Symbols(String[] args) {
-        if (args.length == 0) {
-            System.out.println("SYMBOLS: " + symbols);
-        } else {
-            for (String s : args) {
-                if (!s.matches("[a-zA-Z0-9]")) {
-                    System.out.println("Warning: invalid symbol " + s);
-                    continue;
-                }
-                if (!symbols.add(s.toUpperCase())) {
-                    System.out.println("Warning: symbol already declared " + s);
-                }
-            }
-        }
+    public boolean addSymbol(String symbol) throws NotAlphanumericException, AlreadyDeclaredException {
+        if (!symbol.matches("[a-zA-Z0-9]"))
+            throw new NotAlphanumericException(symbol);
+        symbol = symbol.toLowerCase();
+        if (!symbols.add(symbol))
+            throw new AlreadyDeclaredException(symbol);
+        return true;
     }
 
-    private void States(String[] args) {
-        if (args.length == 0) {
-            System.out.println("STATES: " + states);
-        } else {
-            for (String s : args) {
-                if (!s.matches("[a-zA-Z0-9]+")) {
-                    System.out.println("Warning: invalid state " + s);
-                    continue;
-                }
-                if (!states.add(s.toUpperCase())) {
-                    System.out.println("Warning: state already declared " + s);
-                }
-            }
-        }
+    public boolean addState(String state) throws NotAlphanumericException, AlreadyDeclaredException {
+        if (!state.matches("[a-zA-Z0-9]+"))
+            throw new NotAlphanumericException(state);
+        state = state.toLowerCase();
+        if (!states.add(state))
+            throw new AlreadyDeclaredException(state);
+        return true;
     }
-}
