@@ -35,3 +35,24 @@ public class FSM implements Serializable {
             throw new AlreadyDeclaredException(state);
         return true;
     }
+    public void Transitions_printer() {
+        for (String from : transitions.keySet()) {
+            Map<String, String> map = transitions.get(from);
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                System.out.println(entry.getKey() + " " + from + " " + entry.getValue());
+            }
+        }
+    }
+
+    public String getTransitionsAsString() {
+        StringBuilder sb = new StringBuilder();
+        for (String from : transitions.keySet()) {
+            Map<String, String> map = transitions.get(from);
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                sb.append(entry.getKey()).append(" ")
+                        .append(from).append(" ")
+                        .append(entry.getValue()).append("\n");
+            }
+        }
+        return sb.toString();
+    }
