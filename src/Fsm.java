@@ -133,4 +133,3 @@ public class FSM implements Serializable {
     public Set<String> getFinalStates() { return finalStates; }
     public Map<String, Map<String, String>> getTransitions() { return transitions; }
 }
-
